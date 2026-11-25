@@ -1,0 +1,30 @@
+# EWB-STM32H743-NANO-FULL V6.0 bootloader review draft.
+# Keep outside Waf board discovery until board ID and recovery checks are complete.
+
+MCU STM32H7xx STM32H743xx
+OSCILLATOR_HZ 25000000
+FLASH_SIZE_KB 2048
+# APJ_BOARD_ID: use the same unique EWB ID as the application.
+
+# Sector 0 at 0x08000000. The application starts at 0x08020000.
+FLASH_RESERVE_START_KB 0
+FLASH_BOOTLOADER_LOAD_KB 128
+# Exclude parameter sectors 14 and 15 from bootloader application erase/write.
+FLASH_RESERVE_END_KB 256
+
+# Native USB device recovery candidate. Verify cable power, VBUS and enumeration.
+# Keep CP2104 USART1 and PB1/OTG power switching outside this draft.
+SERIAL_ORDER OTG1
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+
+# Both SPI4 selects stay deasserted during the bootloader. External bias still
+# needs verification at power-up, with NRST asserted, and in STM32 ROM recovery.
+PE4 SPI_FLASH_CS CS HIGH PULLUP
+PA4 MPU6500_CS CS HIGH PULLUP
+
+# Keep all ESC pins outside bootloader output muxing.
+# Confirm externally defined ESC idle levels through reset and bootloader handoff.
+# BOOT0 and NRST are hardware controls. Verify option bytes and SWD recovery.

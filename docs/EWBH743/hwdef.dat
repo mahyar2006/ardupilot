@@ -1,0 +1,69 @@
+# EWB-STM32H743-NANO-FULL V6.0 application review draft.
+# Keep outside Waf board discovery until board ID and electrical checks are complete.
+# Proposed external routing is from docs/EWBH743_PinMapping.csv.
+
+MCU STM32H7xx STM32H743xx
+OSCILLATOR_HZ 25000000
+FLASH_SIZE_KB 2048
+# APJ_BOARD_ID: assign a unique EWB ID shared with hwdef-bl.dat.
+
+# Sector 0 holds the bootloader. Sectors 1-13 hold the application.
+FLASH_RESERVE_START_KB 128
+# STORAGE_FLASH_PAGE caps the application at sector 14. Keep the application
+# FLASH_RESERVE_END_KB at its default of zero to avoid reserving the tail twice.
+STORAGE_FLASH_PAGE 14
+define HAL_STORAGE_SIZE 32768
+# Sectors 14 and 15 are both needed by the normal two-page flash storage backend.
+# Verify crashdump placement with the final logging backend and linker map.
+
+# Native USB FS. Verify USB device power, VBUS behavior, and enumeration.
+# Keep PB1 (LED2 and OTG power switch) out of this draft.
+PA11 OTG_FS_DM OTG1
+PA12 OTG_FS_DP OTG1
+PA13 JTMS-SWDIO SWD
+PA14 JTCK-SWCLK SWD
+SERIAL_ORDER OTG1
+
+# Keep both active-low selects deasserted once ChibiOS initializes GPIO.
+# Confirm independent hardware bias before GPIO init, during reset and in ROM DFU.
+PE4 SPI_FLASH_CS CS HIGH PULLUP
+PA4 MPU6500_CS CS HIGH PULLUP
+
+# SPI4 proposal. Check flash population and that only the selected device drives MISO.
+# Confirm MPU6500 bus speeds, orientation and DRDY wiring before enabling its probe.
+# PE2 SPI4_SCK SPI4
+# PE5 SPI4_MISO SPI4
+# PE6 SPI4_MOSI SPI4
+# SPIDEV and IMU Invensense records depend on the confirmed MPU6500 module.
+# PA6 MPU6500_DRDY INPUT
+
+# Confirmed I2C2 routing to AT24C02. Inspect pull-ups and measure bus rise time
+# with the external BMP388 and GY-271 installed before enabling their probes.
+PH4 I2C2_SCL I2C2
+PH5 I2C2_SDA I2C2
+I2C_ORDER I2C2
+# BARO BMP388 I2C:0:<verified address>
+# COMPASS <verified IC> I2C:0:<verified address> <external flag> <rotation>
+
+# Serial candidates. Confirm levels, protocol, baud, and alternate loads first.
+# GPS UART7 on camera/JTAG aliases. PB3 reuse consumes SWO.
+# PB4 UART7_TX UART7
+# PB3 UART7_RX UART7
+# ESP32DevLink USART2 on FMC NWE/NWAIT aliases.
+# PD5 USART2_TX USART2
+# PD6 USART2_RX USART2
+# Receiver UART4 on LCD G2/G3. Leave display disconnected and verify polarity.
+# PH13 UART4_TX UART4
+# PH14 UART4_RX UART4
+# Candidate SERIAL_ORDER OTG1 UART7 USART2 UART4
+
+# TIM4 output proposal. Confirm FMC/camera loads, ESC input thresholds and reset
+# behavior before enabling these. Exercise PWM first and check one-way DShot DMA.
+# PD12 TIM4_CH1 TIM4 PWM(1)
+# PD13 TIM4_CH2 TIM4 PWM(2)
+# PB8  TIM4_CH3 TIM4 PWM(3)
+# PB9  TIM4_CH4 TIM4 PWM(4)
+
+# RF resources stay unassigned until interface ownership and voltage limits agree.
+# ADF4351 control proposal: PE3 CLK, PG9 DATA, PG10 LE, optional PD7 CE and PI11 MUXOUT.
+# AD8307 proposal: PA5 ADC1_INP19. Confirm conditioning and scaling first.

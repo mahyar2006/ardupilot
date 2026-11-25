@@ -22,7 +22,11 @@ PA11 OTG_FS_DM OTG1
 PA12 OTG_FS_DP OTG1
 PA13 JTMS-SWDIO SWD
 PA14 JTCK-SWCLK SWD
-SERIAL_ORDER OTG1
+# The onboard CP2104 bridge supplies the UART required by ChibiOS.
+# Confirm the TX/RX jumpers and bridge power on the fitted board.
+PA9 USART1_TX USART1
+PA10 USART1_RX USART1
+SERIAL_ORDER OTG1 USART1
 
 # Keep both active-low selects deasserted once ChibiOS initializes GPIO.
 # Confirm independent hardware bias before GPIO init, during reset and in ROM DFU.
@@ -55,7 +59,7 @@ I2C_ORDER I2C2
 # Receiver UART4 on LCD G2/G3. Leave display disconnected and verify polarity.
 # PH13 UART4_TX UART4
 # PH14 UART4_RX UART4
-# Candidate SERIAL_ORDER OTG1 UART7 USART2 UART4
+# Candidate SERIAL_ORDER OTG1 USART1 UART7 USART2 UART4
 
 # TIM4 output proposal. Confirm FMC/camera loads, ESC input thresholds and reset
 # behavior before enabling these. Exercise PWM first and check one-way DShot DMA.

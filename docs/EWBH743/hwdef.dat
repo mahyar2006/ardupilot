@@ -33,12 +33,13 @@ SERIAL_ORDER OTG1 USART1
 PE4 FLASH_CS CS HIGH PULLUP
 PA4 MPU6500_CS CS HIGH PULLUP
 
-# SPI4 proposal. Check flash population and that only the selected device drives MISO.
-# Confirm MPU6500 bus speeds, orientation and DRDY wiring before enabling its probe.
-# PE2 SPI4_SCK SPI4
-# PE5 SPI4_MISO SPI4
-# PE6 SPI4_MOSI SPI4
-# SPIDEV and IMU Invensense records depend on the confirmed MPU6500 module.
+# Offline MPU6500 bring-up. Verify flash deselection, MISO release, and SPI timing on hardware.
+PE2 SPI4_SCK SPI4
+PE5 SPI4_MISO SPI4
+PE6 SPI4_MOSI SPI4
+SPIDEV mpu6500 SPI4 DEVID1 MPU6500_CS MODE3 1*MHZ 4*MHZ
+# ROTATION_NONE is provisional until the installed sensor orientation is measured.
+IMU Invensense SPI:mpu6500 ROTATION_NONE
 # PA6 MPU6500_DRDY INPUT
 
 # Confirmed I2C2 routing to AT24C02. Inspect pull-ups and measure bus rise time

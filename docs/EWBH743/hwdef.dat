@@ -26,7 +26,7 @@ SERIAL_ORDER OTG1
 
 # Keep both active-low selects deasserted once ChibiOS initializes GPIO.
 # Confirm independent hardware bias before GPIO init, during reset and in ROM DFU.
-PE4 SPI_FLASH_CS CS HIGH PULLUP
+PE4 FLASH_CS CS HIGH PULLUP
 PA4 MPU6500_CS CS HIGH PULLUP
 
 # SPI4 proposal. Check flash population and that only the selected device drives MISO.

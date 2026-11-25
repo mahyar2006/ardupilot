@@ -22,7 +22,7 @@ PA14 JTCK-SWCLK SWD
 
 # Both SPI4 selects stay deasserted during the bootloader. External bias still
 # needs verification at power-up, with NRST asserted, and in STM32 ROM recovery.
-PE4 SPI_FLASH_CS CS HIGH PULLUP
+PE4 FLASH_CS CS HIGH PULLUP
 PA4 MPU6500_CS CS HIGH PULLUP
 
 # Keep all ESC pins outside bootloader output muxing.
